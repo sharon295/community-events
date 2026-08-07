@@ -1,6 +1,7 @@
 "use client";
 
 import EventDateTime from "./EventDateTime";
+import AddToCalendarMenu from "./AddToCalendarMenu";
 
 export default function EventCard({ event, onManage }) {
   const isVirtual = event.locationType === "virtual";
@@ -70,12 +71,7 @@ export default function EventCard({ event, onManage }) {
               Event link
             </a>
           )}
-          <a
-            href={`/api/events/${event.id}/ics`}
-            className="rounded-full border border-plum-deep px-4 py-1.5 text-sm text-plum-deep hover:bg-blush transition"
-          >
-            Add to calendar
-          </a>
+          <AddToCalendarMenu event={event} />
           <button
             type="button"
             onClick={() => onManage(event)}
