@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+:root {
+  --color-plum-deep: #1a0b22;
+  --color-plum: #2d1539;
+  --color-gold: #cdb59d;
+  --color-muted: #59434b;
+  --color-mauve: #a1939f;
+  --color-blush: #f6f3f6;
+  --color-white: #ffffff;
+}
+
+@theme inline {
+  --color-plum-deep: var(--color-plum-deep);
+  --color-plum: var(--color-plum);
+  --color-gold: var(--color-gold);
+  --color-muted: var(--color-muted);
+  --color-mauve: var(--color-mauve);
+  --color-blush: var(--color-blush);
+  --color-white: var(--color-white);
+
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
+}
+
+body {
+  font-family: var(--font-body), sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+.font-heading {
+  font-family: var(--font-heading), serif;
+}
+
+::selection {
+  background: var(--color-gold);
+  color: var(--color-plum-deep);
+}
+
+input,
+textarea,
+select {
+  font-family: var(--font-body), sans-serif;
+}
