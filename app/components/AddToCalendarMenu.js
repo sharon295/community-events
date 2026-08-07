@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // Google/Yahoo want a compact UTC stamp: YYYYMMDDTHHMMSSZ
 function formatCompactUtc(date) {
@@ -13,6 +13,31 @@ const DURATION_MS = 60 * 60 * 1000;
 
 export default function AddToCalendarMenu({ event }) {
   const [open, setOpen] = useState(false);
+  const [coords, setCoords] = useState({ top: 0, left: 0 });
+  const buttonRef = useRef(null);
+
+  // The event card clips its own content (overflow-hidden, to round its
+  // corners around the banner image), which would cut off a dropdown
+  // positioned relative to it. Using position: fixed anchored to the
+  // button's on-screen coordinates lets the menu escape that clipping.
+  function toggle() {
+    if (!open && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setCoords({ top: rect.bottom + 4, left: rect.left });
+    }
+    setOpen((o) => !o);
+  }
+
+  useEffect(() => {
+    if (!open) return;
+    const close = () => setOpen(false);
+    window.addEventListener("scroll", close, true);
+    window.addEventListener("resize", close);
+    return () => {
+      window.removeEventListener("scroll", close, true);
+      window.removeEventListener("resize", close);
+    };
+  }, [open]);
 
   const start = new Date(event.eventAt);
   const end = new Date(start.getTime() + DURATION_MS);
@@ -40,8 +65,9 @@ export default function AddToCalendarMenu({ event }) {
   return (
     <div className="relative">
       <button
+        ref={buttonRef}
         type="button"
-        onClick={() => setOpen((o) => !o)}
+        onClick={toggle}
         className="rounded-full border border-plum-deep px-4 py-1.5 text-sm text-plum-deep hover:bg-blush transition"
       >
         Add to calendar
@@ -49,8 +75,11 @@ export default function AddToCalendarMenu({ event }) {
 
       {open && (
         <>
-          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute left-0 top-full z-20 mt-1 w-52 overflow-hidden rounded-lg border border-mauve/40 bg-white shadow-lg">
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+          <div
+            style={{ position: "fixed", top: coords.top, left: coords.left }}
+            className="z-50 w-52 overflow-hidden rounded-lg border border-mauve/40 bg-white shadow-lg"
+          >
             <a
               href={googleUrl}
               target="_blank"
