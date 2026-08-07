@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { TIMEZONES, LOCATION_TYPES } from "@/lib/constants";
+import { TIMEZONES, LOCATION_TYPES, MAX_DESCRIPTION_WORDS } from "@/lib/constants";
+import { countWords } from "@/lib/text";
 import CategoryTagPicker from "./CategoryTagPicker";
 
 const emptyValues = {
@@ -35,6 +36,7 @@ export default function EventForm({
   const [passcode, setPasscode] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
   const [localError, setLocalError] = useState("");
+  const descriptionWordCount = countWords(values.description);
 
   function set(field, val) {
     setValues((v) => ({ ...v, [field]: val }));
@@ -55,6 +57,9 @@ export default function EventForm({
     if (!values.date || !values.time) return setLocalError("Date and time are required.");
     if (!values.hostedBy.trim()) return setLocalError("Hosted-by name is required.");
     if (values.categoryTags.length === 0) return setLocalError("Pick at least one category tag.");
+    if (countWords(values.description) > MAX_DESCRIPTION_WORDS) {
+      return setLocalError(`Description must be ${MAX_DESCRIPTION_WORDS} words or less.`);
+    }
     if (mode === "create-member" && !passcode.trim()) {
       return setLocalError("Set a passcode so you can edit this event later.");
     }
@@ -191,12 +196,20 @@ export default function EventForm({
 
       <div>
         <label className="block text-sm font-medium mb-1">Description</label>
+        <p className="text-xs text-muted mb-1">Please keep it to {MAX_DESCRIPTION_WORDS} words or less.</p>
         <textarea
           value={values.description}
           onChange={(e) => set("description", e.target.value)}
           rows={4}
           className="w-full rounded-lg border border-mauve/50 px-3 py-2"
         />
+        <p
+          className={`mt-1 text-xs ${
+            descriptionWordCount > MAX_DESCRIPTION_WORDS ? "text-muted font-medium" : "text-muted"
+          }`}
+        >
+          {descriptionWordCount}/{MAX_DESCRIPTION_WORDS} words
+        </p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
