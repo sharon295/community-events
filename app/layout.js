@@ -1,6 +1,7 @@
 import { Cormorant_Garamond, Jost } from "next/font/google";
 import "./globals.css";
 import "@/lib/scheduler";
+import IframeAutoResize from "./components/IframeAutoResize";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-heading",
@@ -25,7 +26,8 @@ export default function RootLayout({ children }) {
       lang="en"
       className={`${cormorant.variable} ${jost.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-blush text-plum-deep">
+      <body className="flex flex-col bg-blush text-plum-deep">
+        <IframeAutoResize />
         {children}
       </body>
     </html>
